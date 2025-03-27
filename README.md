@@ -1,4 +1,4 @@
-#The Lizard Wizard's Shop
+##The Lizard Wizard's Shop
 The Lizard Wizard’ Shop is a fun e-commerce website I have designed for a final project. It is a simple but a functional e-commerce website that has an fun, interactive frontend and simple but robust backend that every e-commerce website has. But the other websites won't be able to provide you with wizard gadgets and trinkets like The Lizard Wizard’s Shop does. 
 
 ## Stack
