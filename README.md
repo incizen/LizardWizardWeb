@@ -7,12 +7,18 @@ The Lizard Wizard’ Shop is a fun e-commerce website I have designed for a fina
 ## To Deploy
 Before deploment, make sure you have installed node.js. After simply copy this repository and open with a code editor then go to terminal and split your terminal. For backend(server) go to the server directory on terminal and type 
 
-### `node index.js`
+    ```console
+    node index.js
+    ```
 After the backend is running go to the other terminal and type, 
 
-### `install npm`
+    ```console
+    npm install
+    ```
 After this go to the client directory on your terminal and type,
 
-### `npm start`
+    ```console
+    npm start
+    ```
 You should be able to see the website on localhost:3000.
 
