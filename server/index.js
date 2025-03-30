@@ -8,13 +8,15 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// MongoDB Connection
-mongoose.connect('mongodb+srv://incizen06:0407@e-comwebproject.ztyamhj.mongodb.net/?retryWrites=true&w=majority&appName=E-comWebProject',
-  {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  }
-);
+require('dotenv').config();
+
+
+const uri = process.env.MONGODB_URI.replace("${MONGODB_PASSWORD}", process.env.MONGODB_PASSWORD);
+
+mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log("Connected to MongoDB"))
+  .catch(err => console.error("MongoDB connection error:", err));
+
 
 app.use(express.json());
 app.use(cors());
