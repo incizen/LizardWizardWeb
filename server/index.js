@@ -11,7 +11,8 @@ const PORT = process.env.PORT || 5000;
 require('dotenv').config();
 
 
-const uri = process.env.MONGODB_URI.replace("${MONGODB_PASSWORD}", process.env.MONGODB_PASSWORD);
+const uri = process.env.MONGODB_URI.replace("${MONGO_PASSWORD}", process.env.MONGO_PASSWORD);
+
 
 mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("Connected to MongoDB"))
@@ -61,7 +62,6 @@ const seedDatabase = async () => {
   }
 };
 
-seedDatabase();
 
 // Fetch all products
 app.get('/api/products', async (req, res) => {
