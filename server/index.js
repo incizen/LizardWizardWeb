@@ -1,126 +1,105 @@
+// server/index.js
+require('dotenv').config();
+
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const bodyParser = require('body-parser');
-const paypal = require('./paypalConfig'); 
-require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-require('dotenv').config();
+// ---- Mongo connection (Atlas) ----
+const uri = process.env.MONGODB_URI;
+if (!uri) {
+  console.error('MONGODB_URI is required in server/.env (see .env.example)');
+  process.exit(1);
+}
 
+mongoose.set('strictQuery', true);
+mongoose
+  .connect(uri, { serverSelectionTimeoutMS: 10000, family: 4 })
+  .then(() => console.log('Connected to MongoDB'))
+  .catch((err) => {
+    console.error('MongoDB connection error:', err.message);
+    process.exit(1);
+  });
 
-const uri = process.env.MONGODB_URI.replace("${MONGO_PASSWORD}", process.env.MONGO_PASSWORD);
+// ---- Middleware ----
+app.use(cors());            // not strictly needed if you use CRA proxy, but safe
+app.use(express.json());    // replaces body-parser
 
-
-mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log("Connected to MongoDB"))
-  .catch(err => console.error("MongoDB connection error:", err));
-
-
-app.use(express.json());
-app.use(cors());
-app.use(bodyParser.json());
-
-// Define Product Schema and Model
-const productSchema = new mongoose.Schema({
-  name: String,
-  type: String,
-  description: String,
-  price: Number,
-  image: String,
-});
-
+// ---- Data models ----
+const productSchema = new mongoose.Schema(
+  {
+    name: String,
+    type: String,
+    description: String,
+    price: Number,
+    image: String,
+  },
+  { timestamps: true }
+);
 const Product = mongoose.model('Product', productSchema);
 
+// ---- Health endpoint (quick smoke test) ----
+app.get('/api/health', (_req, res) => res.json({ ok: true }));
 
-const seedDatabase = async () => {
+// ---- Products ----
+// List with optional search: /api/products?q=term
+app.get('/api/products', async (req, res) => {
   try {
-    await Product.deleteMany(); // Clear existing data
-    const products = [
+    const q = req.query.q?.trim();
+    const filter = q ? { name: { $regex: q, $options: 'i' } } : {};
+    const docs = await Product.find(filter).sort({ createdAt: -1 });
+    res.json(docs);
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Create (for your Add Product form)
+app.post('/api/products', async (req, res) => {
+  try {
+    const doc = await Product.create(req.body);
+    res.status(201).json(doc);
+  } catch (e) {
+    console.error(e);
+    res.status(400).json({ error: 'Bad Request' });
+  }
+});
+
+// ---- OPTIONAL: seed route for quick demo (remove in prod) ----
+app.post('/api/dev/seed', async (_req, res) => {
+  try {
+    await Product.deleteMany({});
+    await Product.insertMany([
       {
         name: "Men's Casual T-shirt",
         type: 'Men',
         description: 'Comfortable and stylish casual T-shirt for men',
         price: 350,
-        image: 'https://media.geeksforgeeks.org/wp-content/uploads/20230407153931/gfg-tshirts.jpg'
+        image:
+          'https://media.geeksforgeeks.org/wp-content/uploads/20230407153931/gfg-tshirts.jpg',
       },
       {
         name: 'Luxury bag',
         type: 'Not Applicable',
         description: 'Elegant luxury bag with leather strap',
         price: 2500,
-        image: 'https://media.geeksforgeeks.org/wp-content/uploads/20230407154213/gfg-bag.jpg'
-      }
-    ];
-
-    await Product.insertMany(products);
-    console.log('Database seeded successfully');
-  } catch (error) {
-    console.error('Error seeding database:', error);
+        image:
+          'https://media.geeksforgeeks.org/wp-content/uploads/20230407154213/gfg-bag.jpg',
+      },
+    ]);
+    res.json({ ok: true });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ error: 'seed failed' });
   }
-};
-
-
-// Fetch all products
-app.get('/api/products', async (req, res) => {
-  try {
-    const allProducts = await Product.find();
-    res.json(allProducts);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-
-
-// Create PayPal Order
-app.post('/api/create-paypal-order', (req, res) => {
-  const { amount } = req.body;
-
-  const create_payment_json = {
-    intent: 'sale',
-    payer: { payment_method: 'paypal' },
-    transactions: [
-      {
-        amount: { total: amount, currency: 'USD' },
-        description: 'Purchase from our store',
-      }
-    ],
-    redirect_urls: {
-      return_url: 'http://localhost:3000/success',
-      cancel_url: 'http://localhost:3000/cancel',
-    },
-  };
-
-  paypal.payment.create(create_payment_json, (error, payment) => {
-    if (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Error creating payment' });
-    } else {
-      res.json({ id: payment.id });
-    }
-  });
-});
-
-
-app.post('/api/capture-paypal-payment', (req, res) => {
-  const { paymentId, payerId } = req.body;
-
-  const execute_payment_json = { payer_id: payerId };
-
-  paypal.payment.execute(paymentId, execute_payment_json, (error, payment) => {
-    if (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Payment execution failed' });
-    } else {
-      res.json({ success: true, payment });
-    }
-  });
 });
 
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
