@@ -5,9 +5,9 @@ The Lizard Wizard’ Shop is a fun e-commerce website I have designed for a fina
  The fronted(client) side it uses React 18 and react-router-dom. For the backend(server) side I used Node js with Express.js, MongoDB and Mongoose for cloud database and management, RESTful API for communication between front-end and back-end. 
 
 ## Requirements
-Node.js 18 LTS
-npm
-MongoDB Atlas SRV URI
+-Node.js 18 LTS
+-npm
+-MongoDB Atlas SRV URI
 
 ## Cloning
     node index.js
@@ -24,7 +24,7 @@ Open two terminals, one for client and one for server side. For the backend(serv
     cp .env.example .env
     
 Edit .env and set a valid Atlas SRV like this:
-MONGODB_URI=mongodb+srv://USER:PASSWORD@cluster0.xxxxx.mongodb.net/DB?retryWrites=true&w=majority
+-MONGODB_URI=mongodb+srv://USER:PASSWORD@cluster0.xxxxx.mongodb.net/DB?retryWrites=true&w=majority
     
     node index.js
    
