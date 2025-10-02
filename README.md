@@ -9,6 +9,28 @@ Node.js 18 LTS,
 npm,
 MongoDB Atlas SRV URI.
 
+## For MongoDB setup (you must provide your own URI)
+
+This repo does not include a MongoDB connection string. Create one of the following and place it in `server/.env` under `MONGODB_URI`.
+
+### Option1- Using your own MongoDB Atlas
+1. Create a free Atlas cluster.
+2. Database Access → add a database user with **readWrite** on your database (e.g., `E-comWebProject`).
+3. Network Access → allow your IP (or temporarily `0.0.0.0/0`).
+4. Atlas → Connect → Drivers → Node.js → copy the SRV template and fill it with your credentials. **URL-encode** the password.
+
+MONGODB_URI=mongodb+srv://<USER>:<ENCODED_PASS>@<cluster>.mongodb.net/E-comWebProject?retryWrites=true&w=majority
+
+5. Start the server:
+
+### Option2 - Using local MongoDB without Atlas
+1. Install MongoDB Community Server and start it (defaults to 127.0.0.1:27017).
+2. Set `server/.env` like:
+   
+MONGODB_URI=mongodb://127.0.0.1:27017/E-comWebProject
+
+3. Start the server
+
 ## Cloning
 
     git clone https://github.com/incizen/LizardWizardWeb.git
