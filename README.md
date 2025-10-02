@@ -10,7 +10,7 @@ npm,
 MongoDB Atlas SRV URI.
 
 ## Cloning
-    node index.js
+
     git clone https://github.com/incizen/LizardWizardWeb.git
     cd LizardWizardWeb
 
@@ -18,7 +18,6 @@ MongoDB Atlas SRV URI.
 ## To run 
 Open two terminals, one for client and one for server side. For the backend(server):
    
-    node index.js
     cd server
     npm install
     cp .env.example .env
@@ -30,7 +29,6 @@ MONGODB_URI=mongodb+srv://USER:PASSWORD@cluster0.xxxxx.mongodb.net/DB?retryWrite
    
 And for the client(frontend), 
     
-    npm install
     cd client
     npm install 
     npm start
