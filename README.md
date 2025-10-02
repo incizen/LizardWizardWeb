@@ -23,8 +23,8 @@ Open two terminals, one for client and one for server side. For the backend(serv
     npm install
     cp .env.example .env
     
-# Edit .env and set a valid Atlas SRV like this:
-# MONGODB_URI=mongodb+srv://USER:PASSWORD@cluster0.xxxxx.mongodb.net/DB?retryWrites=true&w=majority
+Edit .env and set a valid Atlas SRV like this:
+MONGODB_URI=mongodb+srv://USER:PASSWORD@cluster0.xxxxx.mongodb.net/DB?retryWrites=true&w=majority
     
     node index.js
    
