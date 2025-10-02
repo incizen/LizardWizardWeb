@@ -17,3 +17,4 @@ Thumbs.db
 build/
 dist/
 server/.env
+server/.env
